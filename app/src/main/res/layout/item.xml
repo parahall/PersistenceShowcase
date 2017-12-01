@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card_view"
+    android:layout_width="match_parent"
+    android:layout_height="304dp"
+    android:layout_gravity="center"
+    android:layout_margin="16dp"
+    card_view:cardCornerRadius="4dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/background_light"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/iv_item_image"
+            android:layout_width="match_parent"
+            android:layout_height="208dp"
+            android:scaleType="centerCrop"
+            tools:src="@drawable/resize" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/iv_item_image"
+            android:layout_alignTop="@id/tv_item_title"
+            android:alpha="0.6"
+            android:background="#000000" />
+
+        <TextView
+            android:id="@+id/tv_item_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/iv_item_image"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:gravity="start"
+            android:textColor="#FFD700"
+            android:textSize="20sp"
+            tools:text="Star wars movie" />
+
+
+        <TextView
+            android:id="@+id/tv_item_description"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/iv_item_image"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:textSize="12sp"
+            tools:text="It is a period of civil war. Rebel spaceships, striking from a hidden base, have won their first victory against the evil Galactic Empire.  During the battle, Rebel spies managed to steal secret\r\nplans to the Empire's ultimate weapon, the DEATH STAR, an armored space station with enough power to destroy an entire planet.  Pursued by the Empire's sinister agents, Princess Leia races home aboard her starship, custodian of the stolen plans that can save her people and restore freedom to the galaxy...." />
+    </RelativeLayout>
+</android.support.v7.widget.CardView>
