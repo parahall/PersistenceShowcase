@@ -1,9 +1,16 @@
 package com.androidacademy.persistenceshowcase.Models;
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
+
 import com.google.gson.annotations.SerializedName;
 
+@Entity
 public class Film {
 
+    @NonNull
+    @PrimaryKey
     @SerializedName("title")
     private String title;
 
@@ -41,4 +48,5 @@ public class Film {
     public void setUrl(String url) {
         this.url = url;
     }
+
 }

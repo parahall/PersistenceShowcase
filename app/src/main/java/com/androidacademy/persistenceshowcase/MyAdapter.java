@@ -1,5 +1,6 @@
 package com.androidacademy.persistenceshowcase;
 
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.androidacademy.persistenceshowcase.Database.AppDatabase;
 import com.androidacademy.persistenceshowcase.Models.Film;
 import com.bumptech.glide.Glide;
 
