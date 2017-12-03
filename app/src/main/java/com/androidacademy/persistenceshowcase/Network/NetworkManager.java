@@ -54,9 +54,12 @@ public class NetworkManager {
                         for (Film result : results) {
                             String url = imageSearchUrl + URLEncoder.encode(result.getTitle(), "UTF-8");
                             Response<ImageSearchResponse> imageSearchResponse = starWarsApi.filmPicture(url).execute();
-                            List<ImageValue> hits = imageSearchResponse.body().getHits();
-                            if (hits != null && hits.size() > 0) {
-                                result.setUrl(hits.get(0).getWebformatURL());
+                            ImageSearchResponse searchResponse = imageSearchResponse.body();
+                            if (searchResponse != null) {
+                                List<ImageValue> hits = searchResponse.getHits();
+                                if (hits != null && hits.size() > 0) {
+                                    result.setUrl(hits.get(0).getWebformatURL());
+                                }
                             }
                         }
                         if (callbackWeakReference.get() != null) {
@@ -66,10 +69,15 @@ public class NetworkManager {
                         callbackWeakReference.get().onError(response.message());
                     }
                 } catch (IOException e) {
+                    //for debug purpose
                     callbackWeakReference.get().onError(e.getMessage());
                 }
             }
         });
         thread.start();
+    }
+
+    public void onDestroy() {
+        thread.interrupt();
     }
 }
