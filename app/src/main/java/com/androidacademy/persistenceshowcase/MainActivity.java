@@ -1,22 +1,23 @@
 package com.androidacademy.persistenceshowcase;
 
-import android.content.SharedPreferences;
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.MainThread;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.Toast;
 
+import com.androidacademy.persistenceshowcase.Database.FilmContract.FilmEntry;
+import com.androidacademy.persistenceshowcase.Database.FilmDbHelper;
 import com.androidacademy.persistenceshowcase.Models.Film;
 import com.androidacademy.persistenceshowcase.Network.NetworkManager;
 import com.androidacademy.persistenceshowcase.Network.StarWarsDataCallback;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements StarWarsDataCallback {
@@ -33,16 +34,37 @@ public class MainActivity extends AppCompatActivity implements StarWarsDataCallb
     }
 
     private void restoreData() {
-        SharedPreferences mySharedPref = getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
-        Gson gson = new Gson();
-        Type listType = new TypeToken<List<Film>>() {
-        }.getType();
+        SQLiteDatabase db = FilmDbHelper.getInstance(this).getReadableDatabase();
+        String[] projection = {
+                FilmEntry.COLUMN_NAME_TITLE,
+                FilmEntry.COLUMN_NAME_DESCRIPTION,
+                FilmEntry.COLUMN_NAME_PIC_URL
+        };
+        Cursor cursor = db.query(
+                FilmEntry.TABLE_NAME,
+                projection,
+                null,
+                null,
+                null,
+                null,
+                null);
 
-        String string = mySharedPref.getString(DATA_KEY, "");
-        if (!TextUtils.isEmpty(string)) {
-            List<Film> films = gson.fromJson(string, listType);
-            updateUI(films);
+        List<Film> filmList = new ArrayList<>();
+        if (cursor.getCount() > 0) {
+            while (cursor.moveToNext()) {
+                String title = cursor.getString(
+                        cursor.getColumnIndexOrThrow(FilmEntry.COLUMN_NAME_TITLE));
+                String description = cursor.getString(
+                        cursor.getColumnIndexOrThrow(FilmEntry.COLUMN_NAME_DESCRIPTION));
+                String url = cursor.getString(
+                        cursor.getColumnIndexOrThrow(FilmEntry.COLUMN_NAME_PIC_URL));
+                filmList.add(new Film(title, description, url));
+            }
+
+            updateUI(filmList);
         }
+        cursor.close();
+        db.close();
     }
 
     @Override
@@ -87,12 +109,22 @@ public class MainActivity extends AppCompatActivity implements StarWarsDataCallb
     }
 
     private void saveData(List<Film> filmList) {
-        SharedPreferences mySharedPref = getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
-        Gson gson = new Gson();
-        String json = gson.toJson(filmList);
-        SharedPreferences.Editor editor = mySharedPref.edit();
-        editor.putString(DATA_KEY, json);
-        editor.apply();
+        SQLiteDatabase db = FilmDbHelper.getInstance(this).getWritableDatabase();
+        db.beginTransaction();
+        try {
+            ContentValues values = new ContentValues();
+            for (Film file : filmList) {
+                values.put(FilmEntry.COLUMN_NAME_TITLE, file.getTitle());
+                values.put(FilmEntry.COLUMN_NAME_DESCRIPTION, file.getDescription());
+                values.put(FilmEntry.COLUMN_NAME_PIC_URL, file.getUrl());
+                db.insert(FilmEntry.TABLE_NAME, null, values);
+            }
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+
+        db.close();
     }
 
     @MainThread
